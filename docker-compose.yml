@@ -1,0 +1,13 @@
+services:
+  myapp:
+    container_name: reservation-api
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PORT = ${PORT}
+    ports:
+      - 3001:${PORT}
+    env_file:
+      - .env
