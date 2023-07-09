@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "node -r dotenv/config dist/server.js",
+    "dev:local": "ts-node-dev --poll src/server.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/server.js"
   },
