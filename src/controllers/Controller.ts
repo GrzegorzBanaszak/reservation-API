@@ -1,19 +1,12 @@
-import { RequestType } from "../enums/RequestType";
-import IEndpoint from "../interfaces/IEndpoint";
 import Endpoint from "./Endpoint";
 
 export default class Controller {
-  protected endpoints: Array<IEndpoint>;
+  endpoints: Array<Endpoint<unknown>>;
 
   constructor() {
-    this.endpoints = new Array<IEndpoint>();
+    this.endpoints = new Array<Endpoint<unknown>>();
   }
-
-  addEndpoint(endpoint: any, requestType: RequestType): void {
-    this.endpoints.push(new Endpoint(endpoint, requestType));
-  }
-
-  getEndpoints(): Array<IEndpoint> {
-    return this.endpoints;
+  addEndpoint(endpoint: Endpoint<unknown>): void {
+    this.endpoints.push(endpoint);
   }
 }

@@ -1,14 +1,13 @@
 import { RequestType } from "../enums/RequestType";
-import IEndpoint from "../interfaces/IEndpoint";
+import { Request, Response } from "express";
 
-export default class Endpoint implements IEndpoint {
+export default class Endpoint<T> {
   path: string;
-  callback: () => any;
+  callback: (req: Request, res: Response) => Promise<T>;
   typeRequest: RequestType;
-  params: string[];
 
   constructor(
-    callback: () => any,
+    callback: (req: Request, res: Response) => Promise<T>,
     requestType: RequestType,
     params?: Array<string>
   ) {
@@ -16,25 +15,15 @@ export default class Endpoint implements IEndpoint {
     this.callback = callback;
     this.typeRequest = requestType;
     if (params) {
-      this.params = params;
+      this.path = this.getPath(params);
     }
   }
-  getPath(): string {
-    if (this.params) {
-      let path = `/${this.path}`;
-      this.params.forEach((p) => {
-        path += `/:${p}`;
-      });
+  getPath(params: Array<string>): string {
+    let path = `/${this.path}`;
+    params.forEach((p) => {
+      path += `/:${p}`;
+    });
 
-      return path;
-    } else {
-      return `/${this.path}`;
-    }
-  }
-  getEndpoint(): { path: string; callback: () => void } {
-    return {
-      path: this.path,
-      callback: this.callback,
-    };
+    return path;
   }
 }

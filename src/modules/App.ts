@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import IApp from "../interfaces/IApp";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
+import { PrismaLocalClient } from "../db/prisma";
 
 export default class App implements IApp {
   app: Express;
@@ -13,7 +14,7 @@ export default class App implements IApp {
     this.run();
   }
   router(): void {
-    new Router(this.app);
+    new Router(this.app, PrismaLocalClient.getInstancion());
   }
   config(): void {
     dotenv.config();
