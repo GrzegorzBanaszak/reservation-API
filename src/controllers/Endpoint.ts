@@ -1,7 +1,7 @@
 import { RequestType } from "../enums/RequestType";
 import { Request, Response } from "express";
 
-export default class Endpoint<T> {
+export default class Endpoint<T = unknown> {
   path: string;
   callback: (req: Request, res: Response) => Promise<T>;
   typeRequest: RequestType;

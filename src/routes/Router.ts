@@ -4,7 +4,5 @@ import Route from "./Route";
 
 export default class Router {
   protected routes: Array<Route>;
-  protected prismaClient: PrismaClient;
-
-  constructor(app: Express, prismaClient: PrismaClient) {}
+  constructor(app: Express) {}
 }
