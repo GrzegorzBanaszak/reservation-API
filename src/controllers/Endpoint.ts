@@ -11,7 +11,7 @@ export default class Endpoint<T = unknown> {
     requestType: RequestType,
     params?: Array<string>
   ) {
-    this.path = callback.name;
+    this.path = `/${callback.name}`;
     this.callback = callback;
     this.typeRequest = requestType;
     if (params) {

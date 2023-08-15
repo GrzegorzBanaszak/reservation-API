@@ -11,6 +11,7 @@ export default class Route {
     this.routePath = routePath;
     this.router = Router();
     this.routeController = controller;
+    this.initialRoutes();
   }
 
   //Inicjalizacja scieżek
