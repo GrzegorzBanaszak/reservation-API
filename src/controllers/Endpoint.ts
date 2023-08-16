@@ -7,11 +7,12 @@ export default class Endpoint<T = unknown> {
   typeRequest: RequestType;
 
   constructor(
+    path: string,
     callback: (req: Request, res: Response) => Promise<T>,
     requestType: RequestType,
     params?: Array<string>
   ) {
-    this.path = `/${callback.name}`;
+    this.path = `/${path}`;
     this.callback = callback;
     this.typeRequest = requestType;
     if (params) {

@@ -4,9 +4,9 @@ import Endpoint from "./Endpoint";
 
 export default class Controller {
   endpoints: Array<Endpoint>;
-  protected prismaClient: PrismaClient;
+  client: PrismaClient;
   constructor() {
-    this.prismaClient = PrismaLocalClient.getInstancion();
+    this.client = PrismaLocalClient.getInstancion();
     this.endpoints = new Array<Endpoint>();
   }
   addEndpoint(endpoint: Endpoint): void {

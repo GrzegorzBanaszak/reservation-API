@@ -2,27 +2,30 @@ import express, { Express } from "express";
 import IApp from "../interfaces/IApp";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
+import { PrismaLocalClient } from "../db/prisma";
 
 export default class App implements IApp {
-  app: Express;
+  express: Express;
 
   constructor() {
-    this.app = express();
+    this.express = express();
+
+    PrismaLocalClient.getInstancion();
     this.config();
     this.router();
     this.run();
   }
   router(): void {
-    new Router(this.app);
+    new Router(this.express);
   }
   config(): void {
     dotenv.config();
-    this.app.use(express.json());
-    this.app.use(express.urlencoded({ extended: false }));
+    this.express.use(express.json());
+    this.express.use(express.urlencoded({ extended: false }));
   }
 
   run(): void {
-    this.app.listen(process.env.PORT, () => {
+    this.express.listen(process.env.PORT, () => {
       console.log("App running on port " + process.env.PORT);
     });
   }
