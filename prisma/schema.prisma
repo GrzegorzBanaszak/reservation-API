@@ -9,3 +9,27 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Patient {
+  id          String @id @default(uuid())
+  firstName   String
+  lastName    String
+  phoneNumber String
+  pesel       String
+}
+
+model Doctor {
+  id             String @id @default(uuid())
+  firstName      String
+  lastName       String
+  specialization String
+  phoneNumber    String
+}
+
+model Hospital {
+  id          String @id @default(uuid())
+  name        String
+  city        String
+  street      String
+  localNumber String
+}
