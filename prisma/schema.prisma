@@ -15,7 +15,7 @@ model Patient {
   firstName   String
   lastName    String
   phoneNumber String
-  pesel       String
+  pesel       String @unique
 }
 
 model Doctor {

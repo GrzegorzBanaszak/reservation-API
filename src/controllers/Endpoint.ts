@@ -1,30 +1,18 @@
 import { RequestType } from "../enums/RequestType";
 import { Request, Response } from "express";
 
-export default class Endpoint<T = unknown> {
+export default class Endpoint {
   path: string;
-  callback: (req: Request, res: Response) => Promise<T>;
+  callback: (req: Request, res: Response) => Promise<void>;
   typeRequest: RequestType;
 
   constructor(
     path: string,
-    callback: (req: Request, res: Response) => Promise<T>,
-    requestType: RequestType,
-    params?: Array<string>
+    callback: (req: Request, res: Response) => Promise<void>,
+    requestType: RequestType
   ) {
-    this.path = `/${path}`;
+    this.path = path;
     this.callback = callback;
     this.typeRequest = requestType;
-    if (params) {
-      this.path = this.getPath(params);
-    }
-  }
-  getPath(params: Array<string>): string {
-    let path = `/${this.path}`;
-    params.forEach((p) => {
-      path += `/:${p}`;
-    });
-
-    return path;
   }
 }
