@@ -7,6 +7,6 @@ export default class Router {
   protected routes: Array<Route>;
   constructor(app: Express) {
     const patientRoute = new PatientRoute();
-    app.use(patientRoute.routePath, patientRoute.router);
+    app.use("/api" + patientRoute.routePath, patientRoute.router);
   }
 }

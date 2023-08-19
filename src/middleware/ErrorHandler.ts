@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
+import CustomError from "../modules/CustomError";
 export default class ErrorHandler {
   constructor() {}
 
-  handler(err: any, req: Request, res: Response, next: NextFunction) {
+  handler(err: CustomError, req: Request, res: Response, next: NextFunction) {
     const statusCode = res.statusCode ? res.statusCode : 500;
 
     res.status(statusCode);
 
-    res.json({
-      message: err.message,
-    });
+    res.json(err.getErrorMessage());
   }
 }
