@@ -30,6 +30,9 @@ export default class Route {
       case RequestType.Post:
         this.router.post(endpoint.path, asyncHandelr(endpoint.callback));
         break;
+      case RequestType.Update:
+        this.router.put(endpoint.path, asyncHandelr(endpoint.callback));
+        break;
     }
   }
 }

@@ -15,6 +15,9 @@ export default class PatientController extends Controller {
       new Endpoint("/pesel/:pesel", this.getByPesel(), RequestType.Get)
     );
     this.addEndpoint(new Endpoint("/", this.createPatient(), RequestType.Post));
+    this.addEndpoint(
+      new Endpoint("/:id", this.updatePatinet(), RequestType.Update)
+    );
   }
 
   getAll(): (req: Request, res: Response) => Promise<void> {
@@ -112,6 +115,63 @@ export default class PatientController extends Controller {
       });
 
       res.status(200).json(createdPatient);
+    };
+  }
+
+  updatePatinet(): (req: Request, res: Response) => Promise<void> {
+    return async (req: Request, res: Response) => {
+      const { firstName, lastName, phoneNumber, pesel } = req.body;
+
+      const errorMassages = new Array<string>();
+
+      if (!firstName || !lastName || !phoneNumber || !pesel) {
+        if (!firstName) {
+          errorMassages.push("Podaj imię");
+        }
+
+        if (!lastName) {
+          errorMassages.push("Podaj nazwisko");
+        }
+
+        if (!phoneNumber) {
+          errorMassages.push("Podaj numer telefonu");
+        }
+
+        if (!pesel) {
+          errorMassages.push("Podaj pesel");
+        }
+
+        res.status(400);
+        throw new CustomError(errorMassages);
+      }
+
+      let isError = false;
+
+      if (!PatientValidation.validationPesel(pesel)) {
+        isError = true;
+        errorMassages.push(
+          "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
+        );
+      }
+
+      if (!PatientValidation.validationPhonNumber(phoneNumber)) {
+        isError = true;
+        errorMassages.push("Niepoprawny numer telefonu.");
+      }
+
+      if (isError) {
+        res.status(400);
+        throw new CustomError(errorMassages);
+      }
+
+      const updatedPatient = await this.client.patient.update({
+        where: {
+          id: req.params.id,
+        },
+        data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
+      });
+
+      res.status(200).json(updatedPatient);
     };
   }
 }
