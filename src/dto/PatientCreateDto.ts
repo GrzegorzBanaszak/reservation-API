@@ -1,5 +1,5 @@
 export default class PatientCreateDto {
-  fisrtName: string;
+  firstName: string;
   lastName: string;
   phoneNumber: string;
   pesel: string;
@@ -9,7 +9,7 @@ export default class PatientCreateDto {
     phoneNumber: string,
     pesel: string
   ) {
-    this.fisrtName = firstNumber;
+    this.firstName = firstNumber;
     this.lastName = lastName;
     this.phoneNumber = phoneNumber;
     this.pesel = pesel;

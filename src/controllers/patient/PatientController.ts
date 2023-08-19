@@ -14,6 +14,7 @@ export default class PatientController extends Controller {
     this.addEndpoint(
       new Endpoint("/pesel/:pesel", this.getByPesel(), RequestType.Get)
     );
+    this.addEndpoint(new Endpoint("/", this.createPatient(), RequestType.Post));
   }
 
   getAll(): (req: Request, res: Response) => Promise<void> {
@@ -62,22 +63,55 @@ export default class PatientController extends Controller {
 
   createPatient(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
-      const patientData = new PatientCreateDto(
-        req.body.firstName,
-        req.body.lastName,
-        req.body.phoneNumber,
-        req.body.pesel
-      );
+      const { firstName, lastName, phoneNumber, pesel } = req.body;
 
-      let isError = false;
       const errorMassages = new Array<string>();
 
-      if (!PatientValidation.validationPesel(patientData.pesel)) {
+      if (!firstName || !lastName || !phoneNumber || !pesel) {
+        if (!firstName) {
+          errorMassages.push("Podaj imię");
+        }
+
+        if (!lastName) {
+          errorMassages.push("Podaj nazwisko");
+        }
+
+        if (!phoneNumber) {
+          errorMassages.push("Podaj numer telefonu");
+        }
+
+        if (!pesel) {
+          errorMassages.push("Podaj pesel");
+        }
+
+        res.status(400);
+        throw new CustomError(errorMassages);
+      }
+
+      let isError = false;
+
+      if (!PatientValidation.validationPesel(pesel)) {
         isError = true;
         errorMassages.push(
           "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
         );
       }
+
+      if (!PatientValidation.validationPhonNumber(phoneNumber)) {
+        isError = true;
+        errorMassages.push("Niepoprawny numer telefonu.");
+      }
+
+      if (isError) {
+        res.status(400);
+        throw new CustomError(errorMassages);
+      }
+
+      const createdPatient = await this.client.patient.create({
+        data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
+      });
+
+      res.status(200).json(createdPatient);
     };
   }
 }

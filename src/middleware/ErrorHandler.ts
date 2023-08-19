@@ -8,6 +8,10 @@ export default class ErrorHandler {
 
     res.status(statusCode);
 
-    res.json(err.getErrorMessage());
+    if (Array.isArray(err.message)) {
+      res.json({ message: err.message });
+    } else {
+      res.json({ message: [err.message] });
+    }
   }
 }
