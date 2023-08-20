@@ -18,6 +18,9 @@ export default class PatientController extends Controller {
     this.addEndpoint(
       new Endpoint("/:id", this.updatePatinet(), RequestType.Update)
     );
+    this.addEndpoint(
+      new Endpoint("/:id", this.deletePatient(), RequestType.Delete)
+    );
   }
 
   getAll(): (req: Request, res: Response) => Promise<void> {
@@ -114,7 +117,7 @@ export default class PatientController extends Controller {
         data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
       });
 
-      res.status(200).json(createdPatient);
+      res.status(201).json(createdPatient);
     };
   }
 
@@ -172,6 +175,30 @@ export default class PatientController extends Controller {
       });
 
       res.status(200).json(updatedPatient);
+    };
+  }
+
+  deletePatient(): (req: Request, res: Response) => Promise<void> {
+    return async (req: Request, res: Response) => {
+      const { id } = req.params;
+      const patient = await this.client.patient.findUnique({
+        where: {
+          id,
+        },
+      });
+
+      if (!patient) {
+        res.status(400);
+        throw new CustomError("Pacient o podanym id nie istnieje");
+      }
+
+      await this.client.patient.delete({
+        where: {
+          id,
+        },
+      });
+
+      res.status(200).json({ message: "Udało się usunąć pacienta" });
     };
   }
 }

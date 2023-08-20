@@ -33,6 +33,9 @@ export default class Route {
       case RequestType.Update:
         this.router.put(endpoint.path, asyncHandelr(endpoint.callback));
         break;
+      case RequestType.Delete:
+        this.router.delete(endpoint.path, asyncHandelr(endpoint.callback));
+        break;
     }
   }
 }
