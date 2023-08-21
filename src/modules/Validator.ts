@@ -1,4 +1,4 @@
-export default class PatientValidation {
+export default class Validator {
   public static validationPesel(pesel: string) {
     return pesel.length === 11 ? true : false;
   }

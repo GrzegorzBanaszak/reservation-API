@@ -1,7 +1,7 @@
 import PatientCreateDto from "../dto/PatientCreateDto";
 import { RequestType } from "../enums/RequestType";
 import CustomError from "../modules/CustomError";
-import PatientValidation from "../modules/PatientValidation";
+import Validator from "../modules/Validator";
 import Controller from "./Controller";
 import Endpoint from "../modules/Endpoint";
 import { Request, Response } from "express";
@@ -96,14 +96,14 @@ export default class PatientController extends Controller {
 
       let isError = false;
 
-      if (!PatientValidation.validationPesel(pesel)) {
+      if (!Validator.validationPesel(pesel)) {
         isError = true;
         errorMassages.push(
           "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
         );
       }
 
-      if (!PatientValidation.validationPhonNumber(phoneNumber)) {
+      if (!Validator.validationPhonNumber(phoneNumber)) {
         isError = true;
         errorMassages.push("Niepoprawny numer telefonu.");
       }
@@ -150,14 +150,14 @@ export default class PatientController extends Controller {
 
       let isError = false;
 
-      if (!PatientValidation.validationPesel(pesel)) {
+      if (!Validator.validationPesel(pesel)) {
         isError = true;
         errorMassages.push(
           "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
         );
       }
 
-      if (!PatientValidation.validationPhonNumber(phoneNumber)) {
+      if (!Validator.validationPhonNumber(phoneNumber)) {
         isError = true;
         errorMassages.push("Niepoprawny numer telefonu.");
       }

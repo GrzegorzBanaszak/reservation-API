@@ -22,18 +22,22 @@ describe("Test patient routes", () => {
     });
   });
 
-  // test("Create patient", async () => {
-  //   const res = await request(app.express)
-  //     .post("/api/patient/")
-  //     .send(patientData);
-  //   expect(res.status).toBe(201);
-  //   patientData.id = res.body.id;
-  // });
+  describe("POST", () => {
+    test("Create patient", async () => {
+      const res = await request(app.express)
+        .post("/api/patient/")
+        .send(patientData);
+      expect(res.status).toBe(201);
+      patientData.id = res.body.id;
+    });
+  });
 
-  // test("Delete patient", async () => {
-  //   const res = await request(app.express).delete(
-  //     "/api/patient/" + patientData.id
-  //   );
-  //   expect(res.body).toEqual({ message: "Udało się usunąć pacienta" });
-  // });
+  describe("DELETE", () => {
+    test("Delete patient", async () => {
+      const res = await request(app.express).delete(
+        "/api/patient/" + patientData.id
+      );
+      expect(res.body).toEqual({ message: "Udało się usunąć pacienta" });
+    });
+  });
 });
