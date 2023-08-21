@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaLocalClient } from "../db/prisma";
-import Endpoint from "./Endpoint";
+import Endpoint from "../modules/Endpoint";
 import ErrorHandler from "../middleware/ErrorHandler";
 
 export default class Controller {

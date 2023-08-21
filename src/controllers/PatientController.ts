@@ -1,9 +1,9 @@
-import PatientCreateDto from "../../dto/PatientCreateDto";
-import { RequestType } from "../../enums/RequestType";
-import CustomError from "../../modules/CustomError";
-import PatientValidation from "../../modules/PatientValidation";
-import Controller from "../Controller";
-import Endpoint from "../Endpoint";
+import PatientCreateDto from "../dto/PatientCreateDto";
+import { RequestType } from "../enums/RequestType";
+import CustomError from "../modules/CustomError";
+import PatientValidation from "../modules/PatientValidation";
+import Controller from "./Controller";
+import Endpoint from "../modules/Endpoint";
 import { Request, Response } from "express";
 
 export default class PatientController extends Controller {

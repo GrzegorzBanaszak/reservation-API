@@ -1,4 +1,4 @@
-import PatientController from "../controllers/patient/PatientController";
+import PatientController from "../controllers/PatientController";
 import Route from "./Route";
 
 export default class PatientRoute extends Route {

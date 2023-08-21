@@ -1,6 +1,6 @@
 import { Router } from "express";
 import Controller from "../controllers/Controller";
-import Endpoint from "../controllers/Endpoint";
+import Endpoint from "../modules/Endpoint";
 import { RequestType } from "../enums/RequestType";
 import asyncHandelr from "express-async-handler";
 
