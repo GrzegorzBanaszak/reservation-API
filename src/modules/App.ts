@@ -1,4 +1,5 @@
 import express, { Express } from "express";
+import http, { Server } from "http";
 import IApp from "../interfaces/IApp";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
@@ -7,6 +8,7 @@ import ErrorHandler from "../middleware/ErrorHandler";
 
 export default class App implements IApp {
   express: Express;
+  server: Server;
 
   constructor() {
     this.express = express();
@@ -28,8 +30,7 @@ export default class App implements IApp {
   }
 
   run(): void {
-    this.express.listen(process.env.PORT, () => {
-      console.log("App running on port " + process.env.PORT);
-    });
+    this.server = http.createServer(this.express);
+    this.server.listen(process.env.PORT);
   }
 }

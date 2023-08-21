@@ -1,3 +1,5 @@
 import App from "./modules/App";
 
-new App();
+const app = new App();
+
+export default app;

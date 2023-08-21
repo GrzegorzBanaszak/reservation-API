@@ -4,7 +4,7 @@ import PatientRoute from "./PatientRoute";
 import DoctorRoute from "./DoctorRoute";
 
 export default class Router {
-  protected routes: Array<Route>;
+  protected routes = new Array<Route>();
   constructor(app: Express) {
     this.routes.push(new PatientRoute());
     this.routes.push(new DoctorRoute());

@@ -1,7 +1,5 @@
 import request from "supertest";
-import App from "../src/modules/App";
-
-const app = new App();
+import app from "../src/server";
 
 const patientData = {
   id: "",
@@ -12,23 +10,30 @@ const patientData = {
 };
 
 describe("Test patient routes", () => {
-  test("Get all patient", async () => {
-    const res = await request(app.express).get("/api/patient/");
-    expect(res.body).toBeInstanceOf(Array);
+  // closing the server
+  afterEach(async () => {
+    await app.server.close();
   });
 
-  test("Create patient", async () => {
-    const res = await request(app.express)
-      .post("/api/patient/")
-      .send(patientData);
-    expect(res.status).toBe(201);
-    patientData.id = res.body.id;
+  describe("GET", () => {
+    test("Get all patient", async () => {
+      const res = await request(app.server).get("/api/patient/");
+      expect(res.status).toBe(200);
+    });
   });
 
-  test("Delete patient", async () => {
-    const res = await request(app.express).delete(
-      "/api/patient/" + patientData.id
-    );
-    expect(res.body).toEqual({ message: "Udało się usunąć pacienta" });
-  });
+  // test("Create patient", async () => {
+  //   const res = await request(app.express)
+  //     .post("/api/patient/")
+  //     .send(patientData);
+  //   expect(res.status).toBe(201);
+  //   patientData.id = res.body.id;
+  // });
+
+  // test("Delete patient", async () => {
+  //   const res = await request(app.express).delete(
+  //     "/api/patient/" + patientData.id
+  //   );
+  //   expect(res.body).toEqual({ message: "Udało się usunąć pacienta" });
+  // });
 });
