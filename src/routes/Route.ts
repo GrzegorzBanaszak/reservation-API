@@ -21,7 +21,6 @@ export default class Route {
       this.addRoute(endpint);
     });
   }
-  // TODO: Dodanie scieżel dla delete i update
   addRoute(endpoint: Endpoint): void {
     switch (endpoint.typeRequest) {
       case RequestType.Get:
