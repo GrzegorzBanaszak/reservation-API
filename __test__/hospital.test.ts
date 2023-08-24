@@ -34,7 +34,7 @@ describe("Hospitals", () => {
   });
 
   describe("PUT", () => {
-    test("Create hospital", async () => {
+    test("Update hospital", async () => {
       hospitalCreatedData.name = "Wojskowy";
       const res = await request(app.express)
         .put("/api/hospital/" + createdId)

@@ -174,7 +174,7 @@ export default class PatientController extends Controller {
         data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
       });
 
-      res.status(200).json(updatedPatient);
+      res.status(201).json(updatedPatient);
     };
   }
 

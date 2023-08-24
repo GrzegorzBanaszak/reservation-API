@@ -19,17 +19,20 @@ model Patient {
 }
 
 model Doctor {
-  id             String @id @default(uuid())
+  id             String    @id @default(uuid())
   firstName      String
   lastName       String
   specialization String
   phoneNumber    String
+  hospital       Hospital? @relation(fields: [hospitalId], references: [id])
+  hospitalId     String?
 }
 
 model Hospital {
-  id          String @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   city        String
   street      String
   localNumber String
+  doctors     Doctor[]
 }

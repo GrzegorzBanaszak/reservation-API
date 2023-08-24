@@ -13,6 +13,9 @@ export default class DoctorController extends Controller {
     this.addEndpoint(new Endpoint("/id/:id", this.getById(), RequestType.Get));
     this.addEndpoint(new Endpoint("/", this.createDoctor(), RequestType.Post));
     this.addEndpoint(
+      new Endpoint("/:id", this.updateDoctor(), RequestType.Update)
+    );
+    this.addEndpoint(
       new Endpoint("/:id", this.deleteDoctor(), RequestType.Delete)
     );
   }
@@ -133,7 +136,7 @@ export default class DoctorController extends Controller {
         throw new CustomError(errorMassages);
       }
 
-      const updatedPatient = await this.client.patient.update({
+      const updatedDoctor = await this.client.doctor.update({
         where: {
           id: req.params.id,
         },
@@ -145,7 +148,7 @@ export default class DoctorController extends Controller {
         ),
       });
 
-      res.status(200).json(updatedPatient);
+      res.status(201).json(updatedDoctor);
     };
   }
 

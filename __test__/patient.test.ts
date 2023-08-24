@@ -28,8 +28,18 @@ describe("Test patient routes", () => {
         .post("/api/patient/")
         .send(patientData);
       expect(res.status).toBe(201);
+      expect(res.body.firstName).toBe("Jan");
       patientData.id = res.body.id;
     });
+  });
+
+  test("Update doctor", async () => {
+    patientData.firstName = "Janusz";
+    const res = await request(app.express)
+      .put("/api/patient/" + patientData.id)
+      .send(patientData);
+    expect(res.status).toBe(201);
+    expect(res.body.firstName).toBe("Janusz");
   });
 
   describe("DELETE", () => {
