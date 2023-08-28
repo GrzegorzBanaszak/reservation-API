@@ -11,28 +11,54 @@ datasource db {
 }
 
 model Patient {
-  id          String @id @default(uuid())
-  firstName   String
-  lastName    String
-  phoneNumber String
-  pesel       String @unique
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  firstName     String
+  lastName      String
+  phoneNumber   String
+  pesel         String         @unique
+  doctor        Doctor?        @relation(fields: [doctorId], references: [id])
+  doctorId      String?
+  hospital      Hospital?      @relation(fields: [hospitalId], references: [id])
+  hospitalId    String?
+  patientVisits PatientVisit[]
 }
 
 model Doctor {
-  id             String    @id @default(uuid())
+  id             String         @id @default(uuid())
+  email          String         @unique
+  password       String
   firstName      String
   lastName       String
   specialization String
   phoneNumber    String
-  hospital       Hospital? @relation(fields: [hospitalId], references: [id])
+  patients       Patient[]
+  hospital       Hospital?      @relation(fields: [hospitalId], references: [id])
   hospitalId     String?
+  patientVisits  PatientVisit[]
 }
 
 model Hospital {
+  id            String         @id @default(uuid())
+  name          String
+  city          String
+  street        String
+  localNumber   String
+  doctors       Doctor[]
+  patients      Patient[]
+  patientVisits PatientVisit[]
+}
+
+model PatientVisit {
   id          String   @id @default(uuid())
-  name        String
-  city        String
-  street      String
-  localNumber String
-  doctors     Doctor[]
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  patientId   String
+  hospital    Hospital @relation(fields: [hospitalId], references: [id])
+  hospitalId  String
+  doctor      Doctor   @relation(fields: [doctorId], references: [id])
+  doctorId    String
+  visitBegin  DateTime
+  visitEnd    DateTime
+  description String?
 }

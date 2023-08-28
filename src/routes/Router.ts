@@ -3,6 +3,7 @@ import Route from "./Route";
 import PatientRoute from "./PatientRoute";
 import DoctorRoute from "./DoctorRoute";
 import HospitalRoute from "./HospitalRoute";
+import AuthorizationRoute from "./AuthorizationRoute";
 
 export default class Router {
   protected routes = new Array<Route>();
@@ -10,6 +11,7 @@ export default class Router {
     this.routes.push(new PatientRoute());
     this.routes.push(new DoctorRoute());
     this.routes.push(new HospitalRoute());
+    this.routes.push(new AuthorizationRoute());
     this.initialRoutes(app);
   }
 

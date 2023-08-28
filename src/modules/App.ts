@@ -1,10 +1,12 @@
 import express, { Express } from "express";
+import cors from "cors";
 import http, { Server } from "http";
 import IApp from "../interfaces/IApp";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
 import { PrismaLocalClient } from "../db/prisma";
 import ErrorHandler from "../middleware/ErrorHandler";
+import cookieParser from "cookie-parser";
 
 export default class App implements IApp {
   express: Express;
@@ -25,6 +27,13 @@ export default class App implements IApp {
   }
   config(): void {
     dotenv.config();
+    this.express.use(
+      cors({
+        credentials: true,
+        origin: true,
+      })
+    );
+    this.express.use(cookieParser());
     this.express.use(express.json());
     this.express.use(express.urlencoded({ extended: false }));
   }
