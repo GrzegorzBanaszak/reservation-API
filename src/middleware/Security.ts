@@ -1,6 +1,7 @@
 import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+
 export default class Security {
   constructor() {}
   getCookisConfig(): CookieOptions {
