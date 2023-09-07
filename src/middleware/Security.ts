@@ -25,4 +25,11 @@ export default class Security {
 
     return hash;
   }
+
+  async isPasswordCurrect(
+    password: string,
+    hashPassword: string
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashPassword);
+  }
 }

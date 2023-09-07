@@ -17,19 +17,9 @@ export default class AuthorizationController extends Controller {
         userMiddleware.validateLogin,
       ])
     );
-    this.addEndpoint(
-      new Endpoint("/register", this.register(), RequestType.Post)
-    );
   }
   // auth/login
   login(): (req: Request, res: Response) => Promise<void> {
-    return async (req: Request, res: Response) => {
-      const token = this.security.generateToken("123");
-      res.status(200).json({ token });
-    };
-  }
-
-  register(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const token = this.security.generateToken("123");
       res.status(200).json({ token });

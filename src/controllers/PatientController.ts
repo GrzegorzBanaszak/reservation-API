@@ -5,8 +5,14 @@ import Validator from "../modules/Validator";
 import Controller from "./Controller";
 import Endpoint from "../modules/Endpoint";
 import { Request, Response } from "express";
+import IPatientRequest from "../interfaces/IPatientRequest";
+import Security from "../middleware/Security";
+
+import { PatientMapper } from "../mapper/PatientMapper";
 
 export default class PatientController extends Controller {
+  security = new Security();
+  mapper = new PatientMapper();
   constructor() {
     super();
     this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
@@ -14,7 +20,9 @@ export default class PatientController extends Controller {
     this.addEndpoint(
       new Endpoint("/pesel/:pesel", this.getByPesel(), RequestType.Get)
     );
-    this.addEndpoint(new Endpoint("/", this.createPatient(), RequestType.Post));
+    this.addEndpoint(
+      new Endpoint("/", this.registerPatient(), RequestType.Post)
+    );
     this.addEndpoint(
       new Endpoint("/:id", this.updatePatinet(), RequestType.Update)
     );
@@ -66,58 +74,24 @@ export default class PatientController extends Controller {
       res.status(200).json(patient);
     };
   }
-
-  createPatient(): (req: Request, res: Response) => Promise<void> {
-    return async (req: Request, res: Response) => {
-      const { firstName, lastName, phoneNumber, pesel } = req.body;
-
-      const errorMassages = new Array<string>();
-
-      if (!firstName || !lastName || !phoneNumber || !pesel) {
-        if (!firstName) {
-          errorMassages.push("Podaj imię");
-        }
-
-        if (!lastName) {
-          errorMassages.push("Podaj nazwisko");
-        }
-
-        if (!phoneNumber) {
-          errorMassages.push("Podaj numer telefonu");
-        }
-
-        if (!pesel) {
-          errorMassages.push("Podaj pesel");
-        }
-
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
-
-      let isError = false;
-
-      if (!Validator.validationPesel(pesel)) {
-        isError = true;
-        errorMassages.push(
-          "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
-        );
-      }
-
-      if (!Validator.validationPhonNumber(phoneNumber)) {
-        isError = true;
-        errorMassages.push("Niepoprawny numer telefonu.");
-      }
-
-      if (isError) {
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
+  // TODO: Zmienić dodawanie pacjęta na rejestracje z email i hasłem
+  registerPatient(): (req: IPatientRequest, res: Response) => Promise<void> {
+    return async (req: IPatientRequest, res: Response) => {
+      const hashPassword = await this.security.hashPassword(req.body.password);
 
       const createdPatient = await this.client.patient.create({
-        data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
+        data: {
+          ...req.body,
+          password: hashPassword,
+        },
       });
 
-      res.status(201).json(createdPatient);
+      const token = this.security.generateToken(createdPatient.id);
+      res.cookie("token", token, this.security.getCookisConfig());
+
+      const dto = this.mapper.mapGet(createdPatient);
+
+      res.status(201).json(dto);
     };
   }
 

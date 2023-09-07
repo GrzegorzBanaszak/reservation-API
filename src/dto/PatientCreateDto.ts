@@ -3,6 +3,8 @@ export default class PatientCreateDto {
   lastName: string;
   phoneNumber: string;
   pesel: string;
+  email: string;
+  password: string;
   constructor(
     firstNumber: string,
     lastName: string,
