@@ -1,4 +1,4 @@
-import { Mapper } from "@automapper/core";
+import { Mapper, createMap } from "@automapper/core";
 import { mapper } from "../mapper/Mapper";
 import type { Patient } from "@prisma/client";
 import PatientGetDto from "../dto/PatientGetDto";

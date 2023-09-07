@@ -1,6 +1,6 @@
 import { createMap, createMapper } from "@automapper/core";
 import { PojosMetadataMap, pojos } from "@automapper/pojos";
-import type { Patient } from "@prisma/client";
+import { Patient } from "@prisma/client";
 import PatientGetDto from "../dto/PatientGetDto";
 
 export function createPatientMetadata() {

@@ -1,14 +1,13 @@
 import express, { Express } from "express";
 import cors from "cors";
 import http, { Server } from "http";
-import IApp from "../interfaces/IApp";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
 import { PrismaLocalClient } from "../db/prisma";
 import ErrorHandler from "../middleware/ErrorHandler";
 import cookieParser from "cookie-parser";
 
-export default class App implements IApp {
+export default class App {
   express: Express;
   server: Server;
 
