@@ -1,31 +1,13 @@
-import { createMap, createMapper } from "@automapper/core";
-import { PojosMetadataMap, pojos } from "@automapper/pojos";
-import { Patient } from "@prisma/client";
-import PatientGetDto from "../dto/PatientGetDto";
+import { createMapper } from "@automapper/core";
+import { pojos } from "@automapper/pojos";
 
-export function createPatientMetadata() {
-  PojosMetadataMap.create<Patient>("Patient", {
-    id: String,
-    email: String,
-    password: String,
-    firstName: String,
-    lastName: String,
-    phoneNumber: String,
-    pesel: String,
-  });
-  PojosMetadataMap.create<PatientGetDto>("PatientDto", {
-    id: String,
-    email: String,
-    firstName: String,
-    lastName: String,
-    phoneNumber: String,
-    pesel: String,
-  });
-}
+import { MapperStrategy } from "./MapperStrategy";
 
-createPatientMetadata();
+const mapperStrategy = new MapperStrategy();
+
+mapperStrategy.createMetadata();
 export const mapper = createMapper({
   strategyInitializer: pojos(),
 });
 
-createMap<Patient, PatientGetDto>(mapper, "Patient", "PatientDto");
+mapperStrategy.createMaps(mapper);

@@ -3,7 +3,6 @@ import cors from "cors";
 import http, { Server } from "http";
 import dotenv from "dotenv";
 import Router from "../routes/Router";
-import { PrismaLocalClient } from "../db/prisma";
 import ErrorHandler from "../middleware/ErrorHandler";
 import cookieParser from "cookie-parser";
 
@@ -14,7 +13,6 @@ export default class App {
   constructor() {
     this.express = express();
 
-    PrismaLocalClient.getInstancion();
     this.config();
     this.router();
     this.run();

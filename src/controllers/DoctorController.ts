@@ -1,13 +1,16 @@
+import { PrismaLocalClient } from "../db/prisma";
 import DoctorCreateDto from "../dto/DoctorCreateDto";
 import { RequestType } from "../enums/RequestType";
+import { Injectable } from "../injection/injector";
 import CustomError from "../modules/CustomError";
 import Endpoint from "../modules/Endpoint";
 import Validator from "../modules/Validator";
 import Controller from "./Controller";
 import { Request, Response } from "express";
 
+@Injectable()
 export default class DoctorController extends Controller {
-  constructor() {
+  constructor(public client: PrismaLocalClient) {
     super();
     this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
     this.addEndpoint(new Endpoint("/id/:id", this.getById(), RequestType.Get));

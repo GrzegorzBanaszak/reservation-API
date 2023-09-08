@@ -1,15 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Injectable } from "../injection/injector";
 
-export class PrismaLocalClient {
-  private static prisma: PrismaClient;
-
-  private constructor() {}
-
-  public static getInstancion(): PrismaClient {
-    if (!PrismaLocalClient.prisma) {
-      PrismaLocalClient.prisma = new PrismaClient();
-    }
-
-    return PrismaLocalClient.prisma;
-  }
-}
+@Injectable()
+export class PrismaLocalClient extends PrismaClient {}
