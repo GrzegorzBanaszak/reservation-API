@@ -1,7 +1,8 @@
 import Endpoint from "../modules/Endpoint";
 import ErrorHandler from "../middleware/ErrorHandler";
+import { IController } from "../interfaces/IController";
 
-export default class Controller {
+export default class Controller implements IController {
   endpoints: Array<Endpoint>;
   errorHandler: ErrorHandler;
   constructor() {

@@ -3,15 +3,16 @@ import Controller from "../controllers/Controller";
 import Endpoint from "../modules/Endpoint";
 import { RequestType } from "../enums/RequestType";
 import asyncHandler from "express-async-handler";
+import { Injector } from "../injection/injector";
 
-export default class Route {
+export default class Route<T extends Controller> {
   router: Router;
   routePath: string;
   routeController: Controller;
-  constructor(routePath: string, controller: Controller) {
+  constructor(routePath: string, controller: new (...args) => T) {
     this.routePath = routePath;
     this.router = Router();
-    this.routeController = controller;
+    this.routeController = Injector.resolve(controller);
     this.initialRoutes();
   }
 

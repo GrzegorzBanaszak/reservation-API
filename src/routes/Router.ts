@@ -4,9 +4,10 @@ import PatientRoute from "./PatientRoute";
 import DoctorRoute from "./DoctorRoute";
 import HospitalRoute from "./HospitalRoute";
 import AuthorizationRoute from "./AuthorizationRoute";
+import Controller from "../controllers/Controller";
 
 export default class Router {
-  protected routes = new Array<Route>();
+  protected routes = new Array<Route<Controller>>();
   constructor(app: Express) {
     this.routes.push(new PatientRoute());
     // this.routes.push(new DoctorRoute());

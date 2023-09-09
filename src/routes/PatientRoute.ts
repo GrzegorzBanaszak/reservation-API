@@ -1,9 +1,8 @@
 import PatientController from "../controllers/PatientController";
-import { Injector } from "../injection/injector";
 import Route from "./Route";
 
-export default class PatientRoute extends Route {
+export default class PatientRoute extends Route<PatientController> {
   constructor() {
-    super("/patient", Injector.resolve(PatientController));
+    super("/patient", PatientController);
   }
 }

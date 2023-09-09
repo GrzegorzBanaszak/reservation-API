@@ -1,3 +1,4 @@
+import { PrismaLocalClient } from "../db/prisma";
 import HospitalCreateDto from "../dto/HospitalCreateDto";
 import { RequestType } from "../enums/RequestType";
 import CustomError from "../modules/CustomError";
@@ -6,7 +7,7 @@ import Controller from "./Controller";
 import { Request, Response } from "express";
 
 export default class HospitalController extends Controller {
-  constructor() {
+  constructor(public client: PrismaLocalClient) {
     super();
     this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
     this.addEndpoint(new Endpoint("/:id", this.getById(), RequestType.Get));
