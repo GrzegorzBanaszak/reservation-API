@@ -3,9 +3,10 @@ import type { Patient } from "@prisma/client";
 import PatientGetDto from "../dto/PatientGetDto";
 import { mapper } from "./Mapper";
 import { Injectable } from "../injection/injector";
+import { IMapper } from "../interfaces/IMapper";
 
 @Injectable()
-export class PatientMapper {
+export class PatientMapper implements IMapper<Patient, PatientGetDto> {
   mapper: Mapper = mapper;
   constructor() {}
   mapGet(data: Patient): PatientGetDto {

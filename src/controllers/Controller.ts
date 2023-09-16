@@ -9,8 +9,11 @@ export default class Controller implements IController {
     //Aby client działał poprawnie funkcje w pomniejszych kontrolerach muszą zwracać funkcje
     this.errorHandler = new ErrorHandler();
     this.endpoints = new Array<Endpoint>();
+    this.routesInit();
   }
   addEndpoint(endpoint: Endpoint): void {
     this.endpoints.push(endpoint);
   }
+
+  routesInit(): void {}
 }

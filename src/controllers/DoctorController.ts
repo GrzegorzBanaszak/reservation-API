@@ -12,6 +12,9 @@ import { Request, Response } from "express";
 export default class DoctorController extends Controller {
   constructor(public client: PrismaLocalClient) {
     super();
+  }
+
+  override routesInit(): void {
     this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
     this.addEndpoint(new Endpoint("/id/:id", this.getById(), RequestType.Get));
     this.addEndpoint(new Endpoint("/", this.createDoctor(), RequestType.Post));
@@ -22,6 +25,9 @@ export default class DoctorController extends Controller {
       new Endpoint("/:id", this.deleteDoctor(), RequestType.Delete)
     );
   }
+
+  // GET /api/doctor
+  // Protection - only user with token
   getAll(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const doctors = await this.client.doctor.findMany();

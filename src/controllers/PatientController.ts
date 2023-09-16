@@ -18,6 +18,9 @@ export default class PatientController extends Controller {
     public security: Security
   ) {
     super();
+  }
+
+  override routesInit(): void {
     const patientMiddle = new PatientMiddleware();
     this.addEndpoint(
       new Endpoint("/", this.getAll(), RequestType.Get, [
@@ -42,6 +45,7 @@ export default class PatientController extends Controller {
       new Endpoint("/:id", this.deletePatient(), RequestType.Delete)
     );
   }
+
   // GET /api/patient
   // Protection - only user with token
   getAll(): (req: Request, res: Response) => Promise<void> {
@@ -116,7 +120,9 @@ export default class PatientController extends Controller {
       res.status(201).json(dto);
     };
   }
-
+  // PUT /api/patient/
+  // Validation - Is patient data has every required filds
+  // Protection - only user with token
   updatePatinet(): (req: IPatientRequest, res: Response) => Promise<void> {
     return async (req: IPatientRequest, res: Response) => {
       const updatedPatient = await this.client.patient.update({
@@ -130,6 +136,8 @@ export default class PatientController extends Controller {
     };
   }
 
+  // DELETE /api/patient/
+  // Protection - only user with token
   deletePatient(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const { id } = req.params;
