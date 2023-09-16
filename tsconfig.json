@@ -12,5 +12,5 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
-  "include": ["./src/**/*.ts", "__test__/patient.test.ts"]
+  "include": ["./src/**/*.ts"]
 }

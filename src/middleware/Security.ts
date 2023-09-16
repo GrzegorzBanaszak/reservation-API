@@ -1,8 +1,10 @@
 import { CookieOptions } from "express";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import { Injectable } from "../injection/injector";
 
-export default class Security {
+@Injectable()
+export class Security {
   constructor() {}
   getCookisConfig(): CookieOptions {
     return {

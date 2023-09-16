@@ -1,15 +1,30 @@
 FROM node:18-alpine
+
+
+ARG DATABASE_URL=postgresql://johndoe:randompassword@host.docker.internal:5432/mydb?schema=public
 WORKDIR /usr/local/apps/myapp/dev
 
-COPY package.json ./
-RUN npm install && npm cache clean --force
+# COPY package.json and package-lock.json files
+COPY package*.json ./
 
+# generated prisma files
+COPY prisma ./prisma/
+
+# COPY ENV variable
+COPY .env ./
+
+# COPY tsconfig.json file
 COPY tsconfig.json ./
 
+# COPY
+COPY . .
+
+RUN npm install
+
 COPY src ./src
-COPY .env ./
+
 
 EXPOSE ${PORT}
 
-RUN npm run build
-CMD ["npm", "run", "dev"]
+
+CMD ["npm", "run", "dock"]

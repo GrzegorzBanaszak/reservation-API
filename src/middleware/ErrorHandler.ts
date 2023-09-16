@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import CustomError from "../modules/CustomError";
-import { Prisma } from "@prisma/client";
+import { PrismaClientInitializationError } from "@prisma/client/runtime/library";
+// import { Prisma } from "@prisma/client";
 export default class ErrorHandler {
   constructor() {}
 
   handler(err: any, req: Request, res: Response, next: NextFunction) {
     const statusCode = res.statusCode ? res.statusCode : 500;
-    if (err instanceof Prisma.PrismaClientInitializationError) {
+    if (err instanceof PrismaClientInitializationError) {
       res.status(500);
       res.json({ message: "Problem z bazą danych" });
     } else if (err instanceof CustomError) {

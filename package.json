@@ -7,7 +7,9 @@
     "test": "jest --forceExit --detectOpenHandles --maxWorkers=1",
     "dev": "ts-node-dev --poll src/server.ts",
     "build": "rimraf ./dist && tsc",
-    "start": "npm run build && node dist/server.js"
+    "start": "npm run build && node dist/server.js",
+    "dock":"npm run generate && npm run dev",
+    "generate": "npx prisma generate"
   },
   "keywords": [],
   "author": "",

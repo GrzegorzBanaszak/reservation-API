@@ -1,37 +1,49 @@
-import PatientCreateDto from "../dto/PatientCreateDto";
 import { RequestType } from "../enums/RequestType";
 import CustomError from "../modules/CustomError";
-import Validator from "../modules/Validator";
 import Controller from "./Controller";
 import Endpoint from "../modules/Endpoint";
 import { Request, Response } from "express";
 import IPatientRequest from "../interfaces/IPatientRequest";
-import Security from "../middleware/Security";
+import { Security } from "../middleware/Security";
 import { PatientMapper } from "../mapper/PatientMapper";
 import { PrismaLocalClient } from "../db/prisma";
 import { Injectable } from "../injection/injector";
+import PatientMiddleware from "../middleware/PatientMiddleware";
 
 @Injectable()
 export default class PatientController extends Controller {
-  security = new Security();
-  constructor(public client: PrismaLocalClient, public mapper: PatientMapper) {
+  constructor(
+    public client: PrismaLocalClient,
+    public mapper: PatientMapper,
+    public security: Security
+  ) {
     super();
-    this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
+    const patientMiddle = new PatientMiddleware();
+    this.addEndpoint(
+      new Endpoint("/", this.getAll(), RequestType.Get, [
+        patientMiddle.validateToken,
+      ])
+    );
     this.addEndpoint(new Endpoint("/id/:id", this.getById(), RequestType.Get));
     this.addEndpoint(
       new Endpoint("/pesel/:pesel", this.getByPesel(), RequestType.Get)
     );
     this.addEndpoint(
-      new Endpoint("/", this.registerPatient(), RequestType.Post)
+      new Endpoint("/", this.registerPatient(), RequestType.Post, [
+        patientMiddle.validateData,
+      ])
     );
     this.addEndpoint(
-      new Endpoint("/:id", this.updatePatinet(), RequestType.Update)
+      new Endpoint("/:id", this.updatePatinet(), RequestType.Update, [
+        patientMiddle.validateData,
+      ])
     );
     this.addEndpoint(
       new Endpoint("/:id", this.deletePatient(), RequestType.Delete)
     );
   }
-
+  // GET /api/patient
+  // Protection - only user with token
   getAll(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const patients = await this.client.patient.findMany();
@@ -40,6 +52,8 @@ export default class PatientController extends Controller {
     };
   }
 
+  // GET /api/patient/:id
+  // Protection - only user with token
   getById(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const { id } = req.params;
@@ -60,6 +74,8 @@ export default class PatientController extends Controller {
     };
   }
 
+  // GET /api/patient/:pesel
+  // Protection - only user with token
   getByPesel(): (req: Request, res: Response) => Promise<void> {
     return async (req: Request, res: Response) => {
       const { pesel } = req.params;
@@ -78,7 +94,9 @@ export default class PatientController extends Controller {
       res.status(200).json(dto);
     };
   }
-  // TODO: Zmienić dodawanie pacjęta na rejestracje z email i hasłem
+
+  // POST /api/patient/
+  // Validation - Is patient data has every required filds
   registerPatient(): (req: IPatientRequest, res: Response) => Promise<void> {
     return async (req: IPatientRequest, res: Response) => {
       const hashPassword = await this.security.hashPassword(req.body.password);
@@ -99,60 +117,16 @@ export default class PatientController extends Controller {
     };
   }
 
-  updatePatinet(): (req: Request, res: Response) => Promise<void> {
-    return async (req: Request, res: Response) => {
-      const { firstName, lastName, phoneNumber, pesel } = req.body;
-
-      const errorMassages = new Array<string>();
-
-      if (!firstName || !lastName || !phoneNumber || !pesel) {
-        if (!firstName) {
-          errorMassages.push("Podaj imię");
-        }
-
-        if (!lastName) {
-          errorMassages.push("Podaj nazwisko");
-        }
-
-        if (!phoneNumber) {
-          errorMassages.push("Podaj numer telefonu");
-        }
-
-        if (!pesel) {
-          errorMassages.push("Podaj pesel");
-        }
-
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
-
-      let isError = false;
-
-      if (!Validator.validationPesel(pesel)) {
-        isError = true;
-        errorMassages.push(
-          "Nieporawny numer pesel. Pesel powinien zawierać 11 znaków"
-        );
-      }
-
-      if (!Validator.validationPhonNumber(phoneNumber)) {
-        isError = true;
-        errorMassages.push("Niepoprawny numer telefonu.");
-      }
-
-      if (isError) {
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
-
+  updatePatinet(): (req: IPatientRequest, res: Response) => Promise<void> {
+    return async (req: IPatientRequest, res: Response) => {
       const updatedPatient = await this.client.patient.update({
         where: {
           id: req.params.id,
         },
-        data: new PatientCreateDto(firstName, lastName, phoneNumber, pesel),
+        data: req.body,
       });
-
-      res.status(201).json(updatedPatient);
+      const dto = this.mapper.mapGet(updatedPatient);
+      res.status(201).json(dto);
     };
   }
 
