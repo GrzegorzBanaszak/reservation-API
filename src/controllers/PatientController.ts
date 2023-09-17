@@ -113,7 +113,11 @@ export default class PatientController extends Controller {
       });
 
       const token = this.security.generateToken(createdPatient.id);
-      res.cookie("token", token, this.security.getCookisConfig());
+      res.cookie(
+        this.security.TOKEN_NAME,
+        token,
+        this.security.getCookisConfig()
+      );
 
       const dto = this.mapper.mapGet(createdPatient);
 

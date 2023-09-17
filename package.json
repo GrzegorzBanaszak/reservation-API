@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --forceExit --detectOpenHandles --maxWorkers=1",
+    "test": "jest --verbose --forceExit --detectOpenHandles --maxWorkers=1 ",
     "dev": "ts-node-dev --poll src/server.ts",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/server.js",

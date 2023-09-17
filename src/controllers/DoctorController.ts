@@ -1,26 +1,54 @@
 import { PrismaLocalClient } from "../db/prisma";
-import DoctorCreateDto from "../dto/DoctorCreateDto";
 import { RequestType } from "../enums/RequestType";
 import { Injectable } from "../injection/injector";
+import { IDoctorRequest } from "../interfaces/IDoctorRequest";
+import { DoctorMapper } from "../mapper/DoctorMapper";
+import { DoctorMiddleware } from "../middleware/DoctorMiddleware";
+import { Security } from "../middleware/Security";
 import CustomError from "../modules/CustomError";
 import Endpoint from "../modules/Endpoint";
-import Validator from "../modules/Validator";
 import Controller from "./Controller";
 import { Request, Response } from "express";
 
 @Injectable()
 export default class DoctorController extends Controller {
-  constructor(public client: PrismaLocalClient) {
+  constructor(
+    public client: PrismaLocalClient,
+    public mapper: DoctorMapper,
+    public security: Security
+  ) {
     super();
   }
 
   override routesInit(): void {
+    const middleware = new DoctorMiddleware();
+
+    //GET
+    // api/doctors/
     this.addEndpoint(new Endpoint("/", this.getAll(), RequestType.Get));
+
+    //GET
+    // api/doctors/id/:id
     this.addEndpoint(new Endpoint("/id/:id", this.getById(), RequestType.Get));
-    this.addEndpoint(new Endpoint("/", this.createDoctor(), RequestType.Post));
+
+    //POST
+    // api/doctor/
     this.addEndpoint(
-      new Endpoint("/:id", this.updateDoctor(), RequestType.Update)
+      new Endpoint("/", this.createDoctor(), RequestType.Post, [
+        middleware.validateData,
+      ])
     );
+
+    //PUT
+    // api/doctor/
+    this.addEndpoint(
+      new Endpoint("/:id", this.updateDoctor(), RequestType.Update, [
+        middleware.validateData,
+      ])
+    );
+
+    //DELETE
+    // api/doctor/:id
     this.addEndpoint(
       new Endpoint("/:id", this.deleteDoctor(), RequestType.Delete)
     );
@@ -32,7 +60,9 @@ export default class DoctorController extends Controller {
     return async (req: Request, res: Response) => {
       const doctors = await this.client.doctor.findMany();
 
-      res.status(200).json(doctors);
+      const dtos = this.mapper.mapGetArray(doctors);
+
+      res.status(200).json(dtos);
     };
   }
 
@@ -50,103 +80,53 @@ export default class DoctorController extends Controller {
         throw new CustomError("Nie udało się znaleź lekarza");
       }
 
-      res.status(200).json(doctor);
+      const dto = this.mapper.mapGet(doctor);
+
+      res.status(200).json(dto);
     };
   }
   // TODO: Zmienić dodawanie lekarza na rejestracje z email i hasłem
-  createDoctor(): (req: Request, res: Response) => Promise<void> {
-    return async (req: Request, res: Response) => {
-      // const { firstName, lastName, specialization, phoneNumber } = req.body;
-      // const errorMassages = new Array<string>();
-      // if (!firstName || !lastName || !specialization || !phoneNumber) {
-      //   if (!firstName) {
-      //     errorMassages.push("Podaj imię");
-      //   }
-      //   if (!lastName) {
-      //     errorMassages.push("Podaj nazwisko");
-      //   }
-      //   if (!phoneNumber) {
-      //     errorMassages.push("Podaj numer telefonu");
-      //   }
-      //   if (!specialization) {
-      //     errorMassages.push("Podaj specializacje");
-      //   }
-      //   res.status(400);
-      //   throw new CustomError(errorMassages);
-      // }
-      // let isError = false;
-      // if (!Validator.validationPhonNumber(phoneNumber)) {
-      //   isError = true;
-      //   errorMassages.push("Niepoprawny numer telefonu.");
-      // }
-      // if (isError) {
-      //   res.status(400);
-      //   throw new CustomError(errorMassages);
-      // }
-      // const createdDoctor = await this.client.doctor.create({
-      //   data: new DoctorCreateDto(
-      //     firstName,
-      //     lastName,
-      //     specialization,
-      //     phoneNumber
-      //   ),
-      // });
-      // res.status(201).json(createdDoctor);
+  createDoctor(): (req: IDoctorRequest, res: Response) => Promise<void> {
+    return async (req: IDoctorRequest, res: Response) => {
+      const createdDoctor = await this.client.doctor.create({
+        data: req.body,
+      });
+
+      if (!createdDoctor) {
+        res.status(401);
+        throw new CustomError("Nie udało sie utworzyć nowego lekarza");
+      }
+
+      const token = this.security.generateToken(createdDoctor.id);
+
+      res.cookie(
+        this.security.TOKEN_NAME,
+        token,
+        this.security.getCookisConfig()
+      );
+
+      const dto = this.mapper.mapGet(createdDoctor);
+      res.status(201).json(dto);
     };
   }
 
-  updateDoctor(): (req: Request, res: Response) => Promise<void> {
-    return async (req: Request, res: Response) => {
-      const { firstName, lastName, specialization, phoneNumber } = req.body;
-
-      const errorMassages = new Array<string>();
-
-      if (!firstName || !lastName || !phoneNumber || !specialization) {
-        if (!firstName) {
-          errorMassages.push("Podaj imię");
-        }
-
-        if (!lastName) {
-          errorMassages.push("Podaj nazwisko");
-        }
-
-        if (!phoneNumber) {
-          errorMassages.push("Podaj numer telefonu");
-        }
-
-        if (!specialization) {
-          errorMassages.push("Podaj specializacje");
-        }
-
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
-
-      let isError = false;
-
-      if (!Validator.validationPhonNumber(phoneNumber)) {
-        isError = true;
-        errorMassages.push("Niepoprawny numer telefonu.");
-      }
-
-      if (isError) {
-        res.status(400);
-        throw new CustomError(errorMassages);
-      }
-
+  updateDoctor(): (req: IDoctorRequest, res: Response) => Promise<void> {
+    return async (req: IDoctorRequest, res: Response) => {
       const updatedDoctor = await this.client.doctor.update({
         where: {
           id: req.params.id,
         },
-        data: new DoctorCreateDto(
-          firstName,
-          lastName,
-          specialization,
-          phoneNumber
-        ),
+        data: req.body,
       });
 
-      res.status(201).json(updatedDoctor);
+      if (!updatedDoctor) {
+        res.status(401);
+        throw new CustomError("Nie udało sie zaktualizować lekarza");
+      }
+
+      const dto = this.mapper.mapGet(updatedDoctor);
+
+      res.status(201).json(dto);
     };
   }
 

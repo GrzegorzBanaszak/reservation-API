@@ -5,6 +5,7 @@ import { Injectable } from "../injection/injector";
 
 @Injectable()
 export class Security {
+  TOKEN_NAME: string = "token";
   constructor() {}
   getCookisConfig(): CookieOptions {
     return {
